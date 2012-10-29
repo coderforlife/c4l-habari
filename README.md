@@ -1,6 +1,6 @@
 This is the www.coderforlife.com website, forked from the Habari project.
 
-Habari is licensed under the Apache License v2.0. "JQuery" and "Blueprint CSS Framework" is under the MIT license. 
+Habari is licensed under the Apache License v2.0. "JQuery" and "Blueprint CSS Framework" is under the MIT license. "GeSHi" is under the GPL license. The "coderforlife" theme and plugin are licensed under GPL.
 
 This repo is lacking all content and missing the config.php from a functioning system but otherwise is good to go. For additional utility, httpd-c4l.conf must be included by Apache. LICENSE and NOTICE, along with the docs submodule, are removed for use in a production environment.
 
