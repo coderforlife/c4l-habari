@@ -1,6 +1,6 @@
 [submodule "system"]
 	path = system
-	url = https://github.com/habari/system.git
+	url = https://github.com/coderforlife/c4l-habari-system.git
 [submodule "doc"]
 	path = doc
 	url = https://github.com/habari/doc.git
