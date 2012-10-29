@@ -63,7 +63,7 @@ class LinkFormater extends Format {
     $email_chars = '[0-9a-z_!~*\'?&=+$%#{}/^`|-]+';
 
     $email = $email_chars.'(?:\.'.$email_chars.')*\@(?:'.$host.'|\['.$ip.'\])';
-    $full = '(?:'.$host.'|'.$ip.')'.$port.'(?:(?:(?:/'.$chars.')+|/)'.$ending_char.')?';
+    $full = '(?:'.$host.'|'.$ip.')'.$port.'(?:(?:/'.$chars.')+'.$ending_char.'|/|)?';
 
     return preg_replace(
       array($start.$email.$end,                $start.'https?://'.$full.$end, $start.$full.$end),
