@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pluggable type="theme">
+	<name>Coder for Life</name>
+	<class>CoderForLifeTheme</class>
+	<author>Jeff Bush</author>
+	<url>http://www.coderforlife.com/</url>
+	<version>1.0</version>
+	<template_engine>rawphpengine</template_engine>
+	<description>The theme for Coder for Life site</description>
+</pluggable>

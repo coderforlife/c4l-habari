@@ -1,0 +1,5 @@
+<div<?php echo isset( $class ) ? " class=\"$class\"" : ''; ?><?php echo isset( $id ) ? " id=\"$id\"" : ''; ?>>
+  <label<?php if (isset($label_title)) { ?> title="<?php echo $label_title; ?>"<?php } else { echo (isset($title) ? " title=\"$title\"" : ''); } ?> for="<?php echo $field; ?>"><small><strong><?php echo $this->caption; ?></strong></small></label>
+  <input<?php if (isset($control_title)) { ?> title="<?php echo $control_title; ?>"<?php } else { echo (isset($title) ? " title=\"$title\"" : ''); } if (isset($tabindex)) echo " tabindex=\"$tabindex\""; ?> type="text" size=30 id="<?php echo $field; ?>" name="<?php echo $field; ?>" value="<?php echo Utils::htmlspecialchars($value); ?>">
+	<span><?php if (isset($label_title)) echo "<small>$label_title</small>"; ?> <?php $control->errors_out('<li>%s</li>', '<ul class="error">%s</ul>'); ?></span>
+</div>
