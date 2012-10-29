@@ -1,0 +1,10 @@
+.fan_box .connect_top, .fan_box .connect_action { padding: 0 !important; }
+.fan_box .name_block { padding-left: 63px; }
+.fan_box .name_block a { color: black; font-size: 0; }
+.fan_box .name_block a .name { padding-left: 20px; background: url(http://www.coderforlife.com/images/fb.png) no-repeat center left; color: #339900; font-size: 11px; line-height: 20px; }
+.fan_box .name_block a .name:hover { text-decoration: underline; }
+.fan_box .profileimage { display: none; }
+.fan_box .connect_widget { position: absolute; top: 0; left: 0; }
+.fan_box .connect_widget .connect_widget_interactive_area { margin: 1px 0 0 !important; }
+.fan_box .connect_widget .connect_widget_like_button { margin-right: 0 !important; padding: 1px 5px 1px 3px !important; cursor: pointer !important; }
+.fan_box .connect_confirmation_cell_like, .fan_box .connect_confirmation_cell_no_like { display: none; }

@@ -1,0 +1,87 @@
+/*
+code {
+  color: #000000 !important;
+  background-color: #DDEBD4;
+  display: block;
+  white-space: pre;
+  width: 99%;
+  overflow: auto;
+}
+code.none { background-color: transparent !important; color: inherit !important; }
+*/
+
+.code {
+  font-family: monospace;
+  font-weight: normal;
+  font-style: normal;
+  white-space: pre-wrap;
+  border: 2px solid #339900;
+  margin-left: 2em;
+  background: #aaaaaa;
+  color: #000000;
+}
+.code {
+  padding-left: 2.5em;
+}
+.code pre.de1 { /* line defaults (mainly effects ;) */
+  white-space:pre-wrap;
+  margin: 0;
+  padding: 0;
+}
+.code a { padding-right: 0px; background: none; color: blue !important; text-decoration: underline !important; border-bottom: 1px solid blue; }
+
+.code .br0 {color: #000000;} /* braces: {}, [], () */
+.code .kw1, .code .kw2 {color: #0000bb; font-weight: bold;} /* keywords / constants */
+.code .kw3 {color: #008000; font-weight: bold;} /* built-in methods */
+.code .nu0, .code .nu6, .code .nu8, .code .nu12, .code .nu16, .code .nu17, .code .nu18, .code .nu19 {color: #000000;} /* numbers in different bases */
+.code .re0 {color: #004b80;} /* variables */
+.code .sy0, .code  .sy1 {color: #000000;} /* symbols: =, +, ->, %, ... */
+.code .st0, .code .st_h {color: #dd0000;} /* strings: "" / '' */
+.code .es0 {color: #ff1c1c; font-weight: bold;} /* escape sequence: \r, \n, ... */
+.code .co1, .code .co2, .code .coMULTI, .code .co4 {color: #008000; font-style: italic;} /* comments */
+.code .co3 {color: #dd0000;} /* HEREDOC strings */
+.code .me1, .code .me2 {color: #0080FF;} /* methods */
+
+.code li, .code .li1 {font-weight: normal;} /* line numbers */
+.code .li2 {font-weight: bold;background: gray;}
+.code .ln {width:1px;font-weight: normal;text-align:right;margin:0;padding:0 2px;} /* line numbers */
+
+/* unknown usage */
+.code .imp {font-weight: bold; color: red;}
+.code .es_h {color: #000099; font-weight: bold;}
+.code span.xtra { display:block; }
+
+/*
+keywords:   .kw1, (if, for, include, return, ...)
+            .kw2, (true, false, null, constants, function, class, ....)
+            .kw3, (built-in methods)
+symbols:    .sy0  (=, +, ->, ...)
+comments:   .co1, .co2, .coMULTI
+strings "": .st0
+strings '': .st_h
+strings <<<:.co3
+numbers:    .nu0  (base 10)
+numbers:    .nu8  (base 8)
+numbers:    .nu12 (base 16)
+braces:     .br0  ({}, [], ())
+variables:  .re0  (in PHP)
+escaped:    .es0  (\t, \n, \r, ...)
+methods:    .me1, .me2
+a line:     .de1  (this effects ;)
+
+unknown:  .de2, .imp, .es_h, .co4, span.xtra, .nu12, .nu19
+
+li .li1 .li2 are the line number stuff
+*/
+
+.dos.code { background: black; color: white; }
+.dos.code  .kw4 {color: #0000ff; font-weight: bold;}
+.dos.code  .re0 {font-weight: bold;}
+.dos.code  .re1, .dos.code  .re2 {color: #004b80;}
+.dos.code .br0 {color: white;}
+.dos.code .nu0 {color: white;}
+.dos.code .sy0, .dos.code  .sy1 {color: white;}
+
+.asm.code  .kw4, .asm.code  .kw5 {color: #000000; font-weight: bold;}
+
+.c.code  .kw4 {color: #0000bb;}
