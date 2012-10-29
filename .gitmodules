@@ -1,9 +1,6 @@
 [submodule "system"]
 	path = system
 	url = https://github.com/coderforlife/c4l-habari-system.git
-[submodule "doc"]
-	path = doc
-	url = https://github.com/habari/doc.git
 [submodule "user/plugins/simpleblacklist"]
 	path = user/plugins/simpleblacklist
 	url = https://github.com/habari-extras/simpleblacklist.git
