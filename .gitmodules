@@ -4,3 +4,9 @@
 [submodule "user/plugins/simpleblacklist"]
 	path = user/plugins/simpleblacklist
 	url = https://github.com/habari-extras/simpleblacklist.git
+[submodule "user/plugins/coderforlife/geshi"]
+	path = user/plugins/coderforlife/geshi
+	url = https://github.com/coderforlife/geshi.git
+[submodule "user/plugins/staticcache"]
+	path = user/plugins/staticcache
+	url = https://github.com/habari-extras/staticcache

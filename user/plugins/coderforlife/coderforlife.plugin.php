@@ -1,6 +1,6 @@
 <?php
 
-include_once dirname(__FILE__).'/../../../geshi.php';
+include_once dirname(__FILE__).'/geshi/geshi.php';
 
 function full_path($f, $b=null) { return (strlen($f) > 0 && $f[0] !== '/') ? ($b?$b:$_SERVER['REQUEST_URI']).$f : $f; }
 function physical_path($f, $b=null) {
