@@ -1,0 +1,62 @@
+RewriteEngine On
+RewriteBase /
+
+##### Prevent filetypes from being accessed ###################################
+<FilesMatch "\.sqlite$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+<FilesMatch "^README\.md$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+<FilesMatch "^httpd-c4l\.conf$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+
+##### Root directory cleanup ##################################################
+RewriteRule ^http-only-cookie-test/(.*)$ /test/http-only-cookie/$1 [R=301,L]
+RewriteRule ^lcd/(.*)$ /projects/lcd/pictures/$1 [R=301,L]
+#RewriteRule ^nz/(.*)$ /??/$1 [R=301,L]
+
+
+##### Prevent hot-linking #####################################################
+# Illegal requests are redirected to the parent document
+# Images are fine
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http(s?)://(www\.)?coderforlife.com/.*$ [NC]
+RewriteCond %{HTTP_REFERER} !^http(s?)://coderforlife/.*$ [NC]
+RewriteRule ^(.*/)[^/]+\.(zip|exe|dll|efi|mui|msi|hex|xsd|xml|json|bs7|patch|bru|c|cc|cpp|cxx|h|hh|sql|asm|reg|txt|log|csv|vbs|java|class|jar|swf|flv|mpg|mp4|webm|ogv|mp3|pdf|brd|sch)$ $1 [R,L,NC]
+
+
+##### Moved projects ##########################################################
+RewriteRule ^projects/expstart(/index.php)?/?$ /projects/utilities/#expstart [R=301,L,NE]
+RewriteRule ^projects/win7boot/bmzip\.php/?$ /projects/win7boot/extras/#bmzip [R=301,L,NE]
+
+
+##### Fix the trailing slash problem ##########################################
+# Only files (like the Habari rule below)
+RewriteCond %{REQUEST_FILENAME} !-f
+# Don't mess with the admin/user/feedback pages
+RewriteCond %{REQUEST_URI} !^/admin/
+RewriteCond %{REQUEST_URI} !^/auth/
+RewriteCond %{REQUEST_URI} !^/ajax/
+RewriteCond %{REQUEST_URI} !^/admin_ajax/
+RewriteCond %{REQUEST_URI} !^/user/
+RewriteCond %{REQUEST_URI} !/feedback$
+# Trailing slash condition combined with rewrite
+RewriteRule ^(.*[^/])$ $1/ [R=301,L]
+
+
+##### Allow unfettered access to temp and test ################################
+RewriteCond %{REQUEST_URI} !^/te(mp|st)/
+RewriteCond %{REQUEST_URI} !^/projects/win7boot/other/
+
+
+##### Habari setup ############################################################
+RewriteCond %{REQUEST_FILENAME} !-f
+## Removed so I can mix unmanaged and managed-content # RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php [PT]
+RewriteRule ^(system/(classes|locale|schema|$)) index.php [PT]
