@@ -5,11 +5,8 @@ $required = (Options::get('comments_require_id') == 1) ? '*' : '';
 ?>
 <div id="commentformcontainer" class="comments">
 	<div id="respond" class="reply" onclick="toggleHidden(this.parentNode)" style="cursor:pointer;"><?php _e('Leave a Reply >'); ?></div>
-<div><b style="color:red">Note:</b> If you are having a problem with Windows 7 Boot Updater please <a href="mailto:jeff@coderforlife.com&subject=Windows%207%20Boot%20Updater%20Problem">email me</a>.
-Include the description of the problem, the output of <a href="/projects/win7boot/extras/#bootinfo">boot-info</a>, and any other relevant information (e.g. if you are dual-booting).</div>
-
-<div><b>If your question has already been answered it will simply be deleted.</b></div>
-
+<div><b style="color:red">Note: If you are having a problem with Windows 7 Boot Updater read <a href="/projects/win7boot/#Troubleshooting">the troubleshooting list</a> first!.</b></div>
+<div><b>If your question has already been answered there or in the comments it will be deleted.</b></div>
 <?php
 if ( Session::has_messages() ) {
 	Session::messages_out();
