@@ -6,11 +6,11 @@ RewriteBase /
   Order allow,deny
   Deny from all
 </FilesMatch>
-<FilesMatch "^README\.md$">
+<FilesMatch "^README\.md(\.gz)?$">
   Order allow,deny
   Deny from all
 </FilesMatch>
-<FilesMatch "^httpd-c4l\.conf$">
+<FilesMatch "^httpd-c4l\.conf(\.gz)?$">
   Order allow,deny
   Deny from all
 </FilesMatch>
