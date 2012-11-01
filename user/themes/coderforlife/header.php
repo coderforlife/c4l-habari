@@ -17,9 +17,6 @@
 <meta property="og:email" content="jeff@coderforlife.com"/>
 <title><?php Options::out('title') ?><?php if ($page_title) echo ' - ' . htmlspecialchars($page_title, ENT_QUOTES); ?></title>
 <link rel="canonical" href="<?= $request->is_article ? $post->permalink : $requested_url ?>">
-<link rel="alternate" type="application/atom+xml" title="Atom 1.0" href="<?php echo $theme->feed_alternate(); ?>">
-<link rel="edit" type="application/atom+xml" title="Atom Publishing Protocol" href="<?php URL::out('atompub_servicedocument'); ?>">
-<link rel="EditURI" type="application/rsd+xml" title="RSD" href="<?php URL::out( 'rsd' ); ?>">
 <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="SHORTCUT ICON" href="/favicon.ico">
@@ -34,7 +31,7 @@
 <?php } else { ?>
 <script type="text/javascript">trkr={_trackPageview:function(path){if(path)alert(path);}}</script>
 <?php } ?>
-<!--<?php echo $theme->header();?>-->
+<?php echo $theme->header();?>
 </head>
 <body>
 <!--[if lte IE 8]><div id="isIE8orOlder"><![endif]-->

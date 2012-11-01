@@ -65,7 +65,7 @@ kbd.block { display: inline-block; min-width:15px; }
 .movie object { border: 2px solid #339900; background: black; margin: 5px 0; }
 .bordered { border: 2px solid #339900; }
 
-span.zoom { cursor: pointer; display: inline-block; vertical-align: middle; }
+span.zoom { cursor: pointer; cursor: url(/images/zoom.cur), url(/images/zoom.png), pointer; cursor: -moz-zoom-in; display: inline-block; vertical-align: middle; }
 span.zoom:hover:after { content: url(/images/expand.png); vertical-align: bottom; position: relative; bottom: -3px; margin-left: -32px; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=75)"; opacity: 0.75; }
 @media screen and (-webkit-min-device-pixel-ratio:0) { span.zoom:hover:after { position: static; } } /* remove relative positioning for Safari/Chrome */
 

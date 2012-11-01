@@ -69,7 +69,7 @@ class CoderForLifeTheme extends Theme {
 	{
 		$class = 'class="comment';
 		if ( $comment->status == Comment::STATUS_UNAPPROVED ) {
-			$class.= '-unapproved';
+			$class.= ' comment-unapproved';
 		}
 		// check to see if the comment is by a registered user
 		if ( $u = User::get( $comment->email ) ) {
