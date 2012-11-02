@@ -75,8 +75,8 @@ span.zoom:hover:after { content: url(/images/expand.png); vertical-align: bottom
 .donate { display: inline; }
 .donate input { vertical-align: bottom; border: 0 none; }
 
-#recaptcha_widget { width: 340px; }
-#recaptcha_widget #recaptcha_image { float: left; border: 2px solid #339900; }
+#recaptcha_widget { margin-top: 2px; width: 340px; }
+#recaptcha_widget #recaptcha_image { float: left; border: 2px solid #339900; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; overflow: hidden; }
 #recaptcha_widget #recaptcha_buttons { float: left; margin: 7px 0 7px 6px; }
 
 html, body {
@@ -371,7 +371,7 @@ textarea {
   padding: 2px 5px;
 }
 
-.comments input[type=submit] { margin: 1px; }
+.comments input[type=submit] { margin: 1px; margin-top: 5px; font-weight: bold; font-size: 1.1em; }
 
 ul.error, ul.success {
   list-style: none;

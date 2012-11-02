@@ -100,10 +100,12 @@ class CoderForLifeTheme extends Theme {
     $required = (Options::get('comments_require_id') == 1) ? '*' : '';
     $this->add_template('formcontrol_text', dirname(__FILE__).'/formcontrol_text.php', true);
     $this->add_template('formcontrol_textarea', dirname(__FILE__).'/formcontrol_textarea.php', true);
+    $this->add_template('formcontrol_recaptcha', dirname(__FILE__).'/formcontrol_recaptcha.php', true);
   	$form->cf_commenter->caption = "Name$required";
   	$form->cf_email->caption = "Mail$required";
     $form->cf_email->label_title = '(not published)';
   	$form->cf_url->caption = 'Website';
+    $form->cf_submit->caption = 'Post Comment';
   }
 }
 
