@@ -205,20 +205,17 @@ APPLET
       if (!$id) $id = substr($movie, 0, strrpos($movie, '.'));
       $name = " name=\"$id\"";
       $id = " id=\"$id\"";
-      $flash = <<<FLASH
-<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"$id width=$w height=$h codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,0,0"$x>
-<param name=movie value="$movie">
-<embed src="$movie" width="$w" height="$h" swLiveConnect=true$id$name type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"$x></embed>
-FLASH;
+      $flash =
+"<object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\"$id width=\"$w\" height=\"$h\" codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,0,0\"$x>".
+"<param name=movie value=\"$movie\">".
+"<embed src=\"$movie\" width=\"$w\" height=\"$h\" swLiveConnect=true$id$name type=\"application/x-shockwave-flash\" pluginspage=\"http://www.macromedia.com/go/getflashplayer\"$x></embed>";
     } else {
       $id = $id ? " id=\"$id\"" : '';
-      $flash = <<<FLASH
-<object$id type="application/x-shockwave-flash" width="$w" height="$h" data="$movie"$x>
-<param name="allowFullScreen" value="true"><param name="movie" value="$movie">
-<b>You do not have Flash installed</b><br><a href="http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash">Click here to get Flash</a>
-FLASH;
+      $flash =
+"<object$id type=\"application/x-shockwave-flash\" width=\"$w\" height=\"$h\" data=\"$movie\"$x>".
+"<param name=\"allowFullScreen\" value=\"true\"><param name=\"movie\" value=\"$movie\">".
+"<b>You do not have Flash installed</b><br><a href=\"http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash\">Click here to get Flash</a>";
     }
-    $flash = str_replace("\n", '', $flash);
     foreach ($extra as $n=>$v)
       $flash .= "<param name=\"$n\" value=\"$v\">";
     return $flash.'</object>';
