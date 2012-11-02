@@ -9,7 +9,7 @@
 	url = https://github.com/coderforlife/habari-simpleblacklist.git
 [submodule "user/plugins/recaptcha"]
 	path = user/plugins/recaptcha
-	url = https://github.com/habari-extras/habari-recaptcha.git
+	url = https://github.com/coderforlife/habari-recaptcha.git
 [submodule "user/plugins/staticcache"]
 	path = user/plugins/staticcache
 	url = https://github.com/habari-extras/staticcache
