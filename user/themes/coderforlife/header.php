@@ -12,9 +12,6 @@
 <meta property="og:type" content="<?= $request->is_article ? 'article' : 'blog' ?>"/>
 <meta property="og:image" content="<?= htmlspecialchars($page_image, ENT_QUOTES) ?>"/>
 <meta property="og:description" content="<?= htmlspecialchars($page_desc, ENT_QUOTES) ?>"/>
-<meta property="og:region" content="CA"/>
-<meta property="og:country-name" content="USA"/>
-<meta property="og:email" content="jeff@coderforlife.com"/>
 <title><?php Options::out('title') ?><?php if ($page_title) echo ' - ' . htmlspecialchars($page_title, ENT_QUOTES); ?></title>
 <link rel="canonical" href="<?= $request->is_article ? $post->permalink : $requested_url ?>">
 <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
