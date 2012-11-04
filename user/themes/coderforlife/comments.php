@@ -16,7 +16,7 @@ google_ad_client = "ca-pub-5735177462697983"; google_ad_slot = "8360279414"; goo
 		if ( $comment->url_out == '' ) {
 			$comment_url = $comment->name_out;
 		} else {
-			$comment_url = '<a href="' . $comment->url_out . '" rel="external">' . $comment->name_out . '</a>';
+			$comment_url = '<a href="' . $comment->url_out . (($comment->email != $post->author->email) ? '" rel="nofollow">' : '">') . $comment->name_out . '</a>';
 		}
 ?>
 <li id="comment-<?php echo $comment->id; ?>" <?php echo $theme->my_comment_class( $comment, $post ); ?>>

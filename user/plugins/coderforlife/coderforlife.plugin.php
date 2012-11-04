@@ -45,7 +45,7 @@ class GeshiFormater extends Format {
 }
 
 class LinkFormater extends Format {
-  public static function linkify($content){
+  public static function linkify($content, $in_comment = false) {
     $start = '@(^|[\s:=~;,\[\]<]|<[^a][^<>]*>)('; // @ is used as the regex delimiter
     $end   = ')($|[\s:=~;,\[\]>.]|</[^a]|<[^/])@i';
     // Top-level domain names. The most accurate way would be to use "[a-z]{2,6}" however that causes many file names to be made into links
@@ -65,10 +65,11 @@ class LinkFormater extends Format {
     $email = $email_chars.'(?:\.'.$email_chars.')*\@(?:'.$host.'|\['.$ip.'\])';
     $full = '(?:'.$host.'|'.$ip.')'.$port.'(?:(?:/'.$chars.')+'.$ending_char.'|/|)?';
 
+    $rel = $in_comment ? ' rel="nofollow"' : '';
     return preg_replace(
-      array($start.$email.$end,                $start.'https?://'.$full.$end, $start.$full.$end),
-      array('$1<a href="mailto:$2">$2</a>$3', '$1<a href="$2">$2</a>$3',      '$1<a href="http://$2">$2</a>$3')
-      , $content);
+      array($start.$email.$end,                $start.'https?://'.$full.$end,    $start.$full.$end),
+      array('$1<a href="mailto:$2">$2</a>$3', '$1<a href="$2"'.$rel.'>$2</a>$3', '$1<a href="http://$2"'.$rel.'>$2</a>$3'),
+      $content);
   }
   public static function fix_rel_links($content, $post) {
     return preg_replace('~(<a\s[^>]*href=)(["\'])([^/"\'][^:]*|)\2([^>]*>)~iUe', "'$1\"'.full_path('$3','{$post->permalink}').'\"$4'", $content);
@@ -490,6 +491,13 @@ class CoderForLife extends Plugin {
   public function filter_post_types($x, $post) { return CoderForLife::type_tags_only($post->tags); }
   public function filter_post_is_best($x, $post) { return $post->tags->has('@best'); }
   public function filter_post_is_current($x, $post) { return ($post->content_type == Post::type('project')) ? !$post->end : FALSE; }
+
+  // Process the content of a comment
+  public function filter_comment_content_out($content, $comment) {
+    $c = StripHTML::strip_bad_tags($content);
+    $c = GeshiFormater::geshi($c);
+    return LinkFormater::linkify(Format::autop($c), $comment->email != Post::get(array('id'=>$comment->post_id))->author->email);
+  }
 
   // Process the style of a post
   public function filter_post_content_out($content, $post) {

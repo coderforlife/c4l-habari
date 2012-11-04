@@ -1,16 +1,7 @@
 <?php
 
 class CoderForLifeTheme extends Theme {
-	/**
-	 * Execute on theme init to apply these filters to output
-	 */
-	public function action_init_theme() {
-    // Format the comments
-    Format::apply('strip_bad_tags', 'comment_content_out');
-    Format::apply('geshi', 'comment_content_out');
-    Format::apply('linkify', 'comment_content_out');
-    Format::apply('autop', 'comment_content_out');
-	}
+  public function action_init_theme() {}
 
   public function filter_template_user_filters($filters) {
     // show projects when going by tag, searching, or by date
