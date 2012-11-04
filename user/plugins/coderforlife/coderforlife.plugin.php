@@ -3,13 +3,9 @@
 include_once dirname(__FILE__).'/geshi/geshi.php';
 
 function full_path($f, $b=null) { return (strlen($f) > 0 && $f[0] !== '/') ? ($b?$b:$_SERVER['REQUEST_URI']).$f : $f; }
-function physical_path($f, $b=null) {
-  if ($_SERVER['DOCUMENT_ROOT'] == 'C:/xampp/htdocs') {
-    return $_SERVER['DOCUMENT_ROOT'].'/coderforlife'.full_path($f, $b);
-  } else {
-    return $_SERVER['DOCUMENT_ROOT'].full_path($f, $b);
-  }
-}
+function physical_path($f, $b=null) { return $_SERVER['DOCUMENT_ROOT'].(($_SERVER['DOCUMENT_ROOT']=='C:/xampp/htdocs') ? '/coderforlife' : '').full_path($f, $b); }
+function base64url_encode($data) { return strtr(rtrim(base64_encode($data), '='), '+/', '-_'); }
+function base64url_decode($data) { return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT)); }
 
 //function array_keys_exist($arr, $keys) { foreach ($keys as $k) { if (!array_key_exists($k, $arr)) { return false; } } return true; }
 //function remove_keys($arr, $keys) { foreach ($keys as $k) unset($arr[$k]); }
@@ -45,36 +41,64 @@ class GeshiFormater extends Format {
 }
 
 class LinkFormater extends Format {
-  public static function linkify($content, $in_comment = false) {
+  public static function linkify($content, $post, $create_links = null, $in_comment = false) {
+    if (is_null($create_links)) { $create_links = $post->style != 'raw'; }
+    
     $start = '@(^|[\s:=~;,\[\]<]|<[^a][^<>]*>)('; // @ is used as the regex delimiter
     $end   = ')($|[\s:=~;,\[\]>.]|</[^a]|<[^/])@i';
-    // Top-level domain names. The most accurate way would be to use "[a-z]{2,6}" however that causes many file names to be made into links
-    // Below is the list of all available top-level domains, excluding:
-    //   "cat" because it is a common file extension and an uncommon top-level domain)
-    //   "eu"  because it is accepted by the general country specific regex used
-    $top_level = 'aero|arpa|asia|biz|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|xxx|';
-    $top_level.= 'a[c-gil-oq-uwxz]|b[abd-jmnorstvwyz]|c[acdf-ik-orsuvxyz]|d[ejkmoz]|e[cegr-u]|f[ijkmor]|g[abd-ilmnp-uwy]|h[kmnrtu]|i[del-oq-t]|j[emop]|k[eghimnprwyz]|l[abcikr-vy]|m[acdeghk-z]|n[acefgilopruz]|om|p[aefghk-nrstwy]|qa|r[eosuw]|s[a-eg-ortuvyz]|t[cdfghj-prtvwz]|u[agksyz]|v[aceginu]|w[fs]|y[et]|z[amw]';
-    $top_level = '(?:'.$top_level.')';
-    $host  = '(?:[0-9a-z_!~*\'()-]+\.)*(?:[0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'.$top_level;
     $ip    = '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)';
     $port  = '(?::[0-9]{1,4})?';
     $chars = '[0-9a-z_!~*\'?&=+$%#().,:\@-]+';
     $ending_char = '[0-9a-z_~\'&=+$%#()/:\@-]';
     $email_chars = '[0-9a-z_!~*\'?&=+$%#{}/^`|-]+';
 
+    // Top-level domain names. The most accurate way would be to use "[a-z]{2,6}" however that causes many file names to be made into links
+    // Below is the list of all available top-level domains, excluding:
+    //   "cat" because it is a common file extension and an uncommon top-level domain)
+    //   "eu"  because it is accepted by the general country specific regex used
+    $top_level = '(?:aero|arpa|asia|biz|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|xxx|a[c-gil-oq-uwxz]|b[abd-jmnorstvwyz]|c[acdf-ik-orsuvxyz]|d[ejkmoz]|e[cegr-u]|f[ijkmor]|g[abd-ilmnp-uwy]|h[kmnrtu]|i[del-oq-t]|j[emop]|k[eghimnprwyz]|l[abcikr-vy]|m[acdeghk-z]|n[acefgilopruz]|om|p[aefghk-nrstwy]|qa|r[eosuw]|s[a-eg-ortuvyz]|t[cdfghj-prtvwz]|u[agksyz]|v[aceginu]|w[fs]|y[et]|z[amw])';
+
+    $host  = '(?:[0-9a-z_!~*\'()-]+\.)*(?:[0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'.$top_level;
     $email = $email_chars.'(?:\.'.$email_chars.')*\@(?:'.$host.'|\['.$ip.'\])';
     $full = '(?:'.$host.'|'.$ip.')'.$port.'(?:(?:/'.$chars.')+'.$ending_char.'|/|)?';
-
+    
+    $href_start = '@(<a\s[^>]*href=)(["\'])';
+    $href_end = '\2([^>]*>)@iUe';
+    
     $rel = $in_comment ? ' rel="nofollow"' : '';
-    return preg_replace(
-      array($start.$email.$end,                $start.'https?://'.$full.$end,    $start.$full.$end),
-      array('$1<a href="mailto:$2">$2</a>$3', '$1<a href="$2"'.$rel.'>$2</a>$3', '$1<a href="http://$2"'.$rel.'>$2</a>$3'),
-      $content);
+    $patterns = array(
+      $start.$email.$end.'e',                      // email
+      $start.'https?://'.$full.$end,               // link with http
+      $start.            $full.$end,               // link
+      $href_start.'([^/"\'][^:"\']*|)' .$href_end, // relative hrefs
+      $href_start.'mailto:('.$email.')'.$href_end, // email hrefs
+      '@(?)('.$email.')(?)@ie');                   // any remaining emails need to be obfuscated
+    $replacements = array(
+      "'$1<a href=\"/contact/'.LinkFormater::encrypt_email('$2').'/\" rel=\"nofollow\">'.LinkFormater::obfuscate_email('$2').'</a>$3'",
+      '$1<a href="$2"'       .$rel.'>$2</a>$3',
+      '$1<a href="http://$2"'.$rel.'>$2</a>$3',
+      "'$1\"'.full_path('$3','{$post->permalink}').'\"$4'",
+      "'$1\"/contact/'.LinkFormater::encrypt_email('$3').'/\" rel=\"nofollow\"$4'",
+      "'$1'.LinkFormater::obfuscate_email('$2').'$3'");
+    if (!$create_links) { $patterns = array_slice($patterns, 3); $replacements = array_slice($replacements, 3); }
+    return preg_replace($patterns, $replacements, $content);
   }
-  public static function fix_rel_links($content, $post) {
-    return preg_replace('~(<a\s[^>]*href=)(["\'])([^/"\'][^:]*|)\2([^>]*>)~iUe', "'$1\"'.full_path('$3','{$post->permalink}').'\"$4'", $content);
+  private static function obfuscate_email($email) {
+    $inj = array('NULL', 'REMOVE', 'XXX', 'JUNK', 'SPAM');
+    $parts = str_split($email, 3);
+    $count = count($parts);
+    $email = '';
+    for ($i = 0; $i < $count; $i++) {
+        $email .= '<span>'.array_rand($inj).'</span>'.$parts[$i];
+    }
+    return $email.'<span>'.array_rand($inj).'</span>';
   }
+  private static $crypt_email_key = 'fairly plain for email', $crypt_md5, $crypt_md5_2;
+  public static function init() { LinkFormater::$crypt_md5 = md5(LinkFormater::$crypt_email_key); LinkFormater::$crypt_md5_2 = md5(LinkFormater::$crypt_md5); }
+  public static function encrypt_email($data) { return base64url_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, LinkFormater::$crypt_md5, $data, MCRYPT_MODE_CBC, LinkFormater::$crypt_md5_2)); }
+  public static function decrypt_email($data) { return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, LinkFormater::$crypt_md5, base64url_decode($data), MCRYPT_MODE_CBC, LinkFormater::$crypt_md5_2), "\0"); }
 }
+LinkFormater::init();
 
 class StripHTML extends Format {
   public static function strip_all_html($content) { return strip_tags($content); }
@@ -314,14 +338,32 @@ class CoderForLife extends Plugin {
 
   public function filter_rewrite_rules($rules)
   {
-    $rules[] = CoderForLife::create_rule('display_project',            8, '%^projects/(?P<name>.+)/?$%iU',                                       'projects/{$name}');
+    $rules[] = CoderForLife::create_rule('display_project',            8, '%^projects/(?P<name>.+)/?$%iU',                                       'projects/{$name}/');
     $rules[] = CoderForLife::create_rule('atom_feed_projects',         6, '%^projects/atom(?:/page/(?P<page>\d+))?/?$%i',                        'projects/atom(/page/{$page})');
     $rules[] = CoderForLife::create_rule('atom_feed_project_comments', 7, '%^projects/(?P<name>.+)/atom/comments(?:/page/(?P<page>\d+))?/?$%iU', 'projects/{$name}/atom/comments(/page/{$page})');
 
-    $rules[] = CoderForLife::create_rule('display_w7bu_user',          6, '%^projects/win7boot/skins/user/(?P<user_slug>.+)/?$%iU',              'projects/win7boot/skins/user/{$user_slug}');
-    $rules[] = CoderForLife::create_rule('display_w7bu_skin',          6, '%^projects/win7boot/skins/skin/(?P<skin_slug>.+)/?$%iU',              'projects/win7boot/skins/skin/{$skin_slug}');
+    $rules[] = CoderForLife::create_rule('display_w7bu_user',          6, '%^projects/win7boot/skins/user/(?P<user_slug>.+)/?$%iU',              'projects/win7boot/skins/user/{$user_slug}/');
+    $rules[] = CoderForLife::create_rule('display_w7bu_skin',          6, '%^projects/win7boot/skins/skin/(?P<skin_slug>.+)/?$%iU',              'projects/win7boot/skins/skin/{$skin_slug}/');
 
+    $rules[] = CoderForLife::create_rule('contact_redir',              6, '%^contact/(?P<email_hash>[A-Za-z0-9_-]+)/?$%i',                       'contact/{$email_hash}/');
+    
     return $rules;
+  }
+  
+  // Special contact (email) redirection
+  public function action_plugin_act_contact_redir($handler) {
+    $email_hash = $handler->handler_vars['email_hash'];
+    header('Location: mailto:'.LinkFormater::decrypt_email($email_hash));
+    $prev = $_SERVER['HTTP_REFERER'];
+    $host = $_SERVER['HTTP_HOST'];
+    $pos = stripos($prev, $host);
+    if (!$prev || $pos < 7 || $pos > 12) { $prev = false; }
+    echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    echo '<html><head><title>Coder for Life - Contact</title>';
+    if ($prev) { echo "<meta HTTP-EQUIV=\"REFRESH\" content=\"1; url=$prev\">"; }
+    echo '<script type="text/javascript">function goback(){window.history.back();}</script></head><body onLoad="setTimeout(goback, 500)">';
+    echo '<p>Your mailto program should have opened. This will go back to the page you came from in a moment. If not please <a href="'.($prev?$prev:'javascript:goback()').'" rel="nofollow">click here</a>.</p>';
+    echo '</body></html>';
   }
 
   public function filter_post_type_display($type, $foruse) {
@@ -494,25 +536,23 @@ class CoderForLife extends Plugin {
 
   // Process the content of a comment
   public function filter_comment_content_out($content, $comment) {
+    $post = Post::get(array('id'=>$comment->post_id));
     $c = StripHTML::strip_bad_tags($content);
     $c = GeshiFormater::geshi($c);
-    return LinkFormater::linkify(Format::autop($c), $comment->email != Post::get(array('id'=>$comment->post_id))->author->email);
+    return LinkFormater::linkify(Format::autop($c), $post, true, $comment->email != $post->author->email);
   }
 
   // Process the style of a post
   public function filter_post_content_out($content, $post) {
     $c = SpecialTagsFormater::special_tags($content);
-    $c = LinkFormater::fix_rel_links($c, $post);
     $c = GeshiFormater::geshi($c);
-    return $post->style == 'raw' ? PhpFormater::run_php($c) : /*simple*/ LinkFormater::linkify(Format::autop($c));
+    return LinkFormater::linkify($post->style == 'raw' ? PhpFormater::run_php($c) : /*simple*/ Format::autop($c), $post);
   }
 
   // Process post excerpts
   public function filter_post_content_excerpt($ce, $post) {
     $ce = StripHTML::strip_excerpt_tags($ce);
-    $ce = LinkFormater::fix_rel_links($ce, $post);
-    if ($post->style != 'raw')
-      $ce = LinkFormater::linkify(Format::autop($ce));
+    $ce = LinkFormater::linkify($post->style == 'raw' ? $ce : Format::autop($ce), $post);
     return Format::more($ce, $post, _t('Read More &raquo;'), 100, 2); // Limit post length on listings to 2 paragraphs or 100 words
   }
 
