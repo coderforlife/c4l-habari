@@ -44,26 +44,26 @@ class LinkFormater extends Format {
   public static function linkify($content, $post, $create_links = null, $in_comment = false) {
     if (is_null($create_links)) { $create_links = $post->style != 'raw'; }
     
-    $start = '@(^|[\s:=~;,\[\]<]|<[^a][^<>]*>)('; // @ is used as the regex delimiter
-    $end   = ')($|[\s:=~;,\[\]>.]|</[^a]|<[^/])@i';
-    $ip    = '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)';
-    $port  = '(?::[0-9]{1,4})?';
-    $chars = '[0-9a-z_!~*\'?&=+$%#().,:\@-]+';
-    $ending_char = '[0-9a-z_~\'&=+$%#()/:\@-]';
-    $email_chars = '[0-9a-z_!~*\'?&=+$%#{}/^`|-]+';
+    static $start = '@(^|[\s:=~;,\[\]<]|<[^a][^<>]*>)('; // @ is used as the regex delimiter
+    static $end   = ')($|[\s:=~;,\[\]>.]|</[^a]|<[^/])@i';
+    static $ip    = '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)';
+    static $port  = '(?::[0-9]{1,4})?';
+    static $chars = '[0-9a-z_!~*\'?&=+$%#().,:\@-]+';
+    static $ending_char = '[0-9a-z_~\'&=+$%#()/:\@-]';
+    static $email_chars = '[0-9a-z_!~*\'?&=+$%#{}/^`|-]+';
 
     // Top-level domain names. The most accurate way would be to use "[a-z]{2,6}" however that causes many file names to be made into links
     // Below is the list of all available top-level domains, excluding:
     //   "cat" because it is a common file extension and an uncommon top-level domain)
     //   "eu"  because it is accepted by the general country specific regex used
-    $top_level = '(?:aero|arpa|asia|biz|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|xxx|a[c-gil-oq-uwxz]|b[abd-jmnorstvwyz]|c[acdf-ik-orsuvxyz]|d[ejkmoz]|e[cegr-u]|f[ijkmor]|g[abd-ilmnp-uwy]|h[kmnrtu]|i[del-oq-t]|j[emop]|k[eghimnprwyz]|l[abcikr-vy]|m[acdeghk-z]|n[acefgilopruz]|om|p[aefghk-nrstwy]|qa|r[eosuw]|s[a-eg-ortuvyz]|t[cdfghj-prtvwz]|u[agksyz]|v[aceginu]|w[fs]|y[et]|z[amw])';
+    static $top_level = '(?:aero|arpa|asia|biz|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|xxx|a[c-gil-oq-uwxz]|b[abd-jmnorstvwyz]|c[acdf-ik-orsuvxyz]|d[ejkmoz]|e[cegr-u]|f[ijkmor]|g[abd-ilmnp-uwy]|h[kmnrtu]|i[del-oq-t]|j[emop]|k[eghimnprwyz]|l[abcikr-vy]|m[acdeghk-z]|n[acefgilopruz]|om|p[aefghk-nrstwy]|qa|r[eosuw]|s[a-eg-ortuvyz]|t[cdfghj-prtvwz]|u[agksyz]|v[aceginu]|w[fs]|y[et]|z[amw])';
 
     $host  = '(?:[0-9a-z_!~*\'()-]+\.)*(?:[0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'.$top_level;
     $email = $email_chars.'(?:\.'.$email_chars.')*\@(?:'.$host.'|\['.$ip.'\])';
     $full = '(?:'.$host.'|'.$ip.')'.$port.'(?:(?:/'.$chars.')+'.$ending_char.'|/|)?';
     
-    $href_start = '@(<a\s[^>]*href=)(["\'])';
-    $href_end = '\2([^>]*>)@iUe';
+    static $href_start = '@(<a\s[^>]*href=)(["\'])';
+    static $href_end = '\2([^>]*>)@iUe';
     
     $rel = $in_comment ? ' rel="nofollow"' : '';
     $patterns = array(
@@ -354,7 +354,7 @@ class CoderForLife extends Plugin {
   public function action_plugin_act_contact_redir($handler) {
     // TODO: display the email on the resulting page in some fashion
     // TODO: filter based on 
-    static $ip127007 = ip2long('127.0.0.7');
+    static $ip127007 = 0x7F000001; // ip2long('127.0.0.7');
     $ip = $_SERVER['REMOTE_ADDR'];
     $rev_ip = implode('.', array_reverse(explode('.', $ip)));
     $hostname = $rev_ip.'.zen.spamhaus.org';
@@ -451,10 +451,10 @@ class CoderForLife extends Plugin {
 
   private static function find_img($c)
   {
-    $any = '(?:[^>]*)';
-    $img_start = '~<(img|zoom|thumb)\s+(?:[^>]+[\s\'"])?';
-    $img_src = 'src=(\'|"|)([^\s>\'"]+)\1';
-    $img_main = '\bmain\b';
+    static $any = '(?:[^>]*)';
+    static $img_start = '~<(img|zoom|thumb)\s+(?:[^>]+[\s\'"])?';
+    static $img_src = 'src=(\'|"|)([^\s>\'"]+)\1';
+    static $img_main = '\bmain\b';
     $img_end = "$any>~i";
     if (preg_match($img_start.$img_src.$any.$img_main.$img_end, $c, $matches)) return $matches[2]; // Look for images with the 'main' flag
     else if (preg_match($img_start.$img_src.$img_end, $c, $matches)) return $matches[2]; // Look for any images
