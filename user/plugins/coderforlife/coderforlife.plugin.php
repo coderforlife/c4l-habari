@@ -352,13 +352,30 @@ class CoderForLife extends Plugin {
   
   // Special contact (email) redirection
   public function action_plugin_act_contact_redir($handler) {
+    // TODO: display the email on the resulting page in some fashion
+    // TODO: filter based on 
+    static $ip127007 = ip2long('127.0.0.7');
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $rev_ip = implode('.', array_reverse(explode('.', $ip)));
+    $hostname = $rev_ip.'.zen.spamhaus.org';
+    $records = dns_get_record($hostname, DNS_A);
+    if ($records !== FALSE) {
+      foreach ($records as $record) {
+        if ($record['type'] == 'A' && ip2long($record['ip']) <= $ip127007) { // $record['host'] == $hostname && $record['class'] == 'IN' &&
+          header('HTTP/1.0 403 Forbidden');
+          echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
+          echo '<html><head><title>Coder for Life - Contact</title></head><body><p>Your IP ($ip) is blacklisted by <a href="http://spamhaus.org">spamhaus.org</a>.</p></body></html>';
+          return;
+        }
+      }
+    }
     $email_hash = $handler->handler_vars['email_hash'];
     header('Location: mailto:'.LinkFormater::decrypt_email($email_hash));
     $prev = $_SERVER['HTTP_REFERER'];
     $host = $_SERVER['HTTP_HOST'];
     $pos = stripos($prev, $host);
     if (!$prev || $pos < 7 || $pos > 12) { $prev = false; }
-    echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
     echo '<html><head><title>Coder for Life - Contact</title>';
     if ($prev) { echo "<meta HTTP-EQUIV=\"REFRESH\" content=\"1; url=$prev\">"; }
     echo '<script type="text/javascript">function goback(){window.history.back();}</script></head><body onLoad="setTimeout(goback, 500)">';
