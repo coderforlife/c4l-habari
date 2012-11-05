@@ -10,9 +10,9 @@
 [submodule "user/plugins/recaptcha"]
 	path = user/plugins/recaptcha
 	url = https://github.com/coderforlife/habari-recaptcha.git
+[submodule "user/plugins/defensio"]
+	path = user/plugins/defensio
+	url = https://github.com/coderforlife/habari-defensio.git
 [submodule "user/plugins/staticcache"]
 	path = user/plugins/staticcache
 	url = https://github.com/habari-extras/staticcache
-[submodule "user/plugins/defensio"]
-	path = user/plugins/defensio
-	url = https://github.com/habari-extras/defensio.git
