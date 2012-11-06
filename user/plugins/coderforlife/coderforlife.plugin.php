@@ -553,10 +553,9 @@ class CoderForLife extends Plugin {
 
   // Process the content of a comment
   public function filter_comment_content_out($content, $comment) {
-    $post = Post::get(array('id'=>$comment->post_id));
     $c = StripHTML::strip_bad_tags($content);
     $c = GeshiFormater::geshi($c);
-    return LinkFormater::linkify(Format::autop($c), $post, true, $comment->email != $post->author->email);
+    return LinkFormater::linkify(Format::autop($c), $comment->post, true, $comment->email != $comment->post->author->email);
   }
 
   // Process the style of a post
