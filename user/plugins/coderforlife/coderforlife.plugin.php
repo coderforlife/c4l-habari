@@ -74,14 +74,17 @@ class LinkFormater extends Format {
       $href_start.'mailto:('.$email.')'.$href_end, // email hrefs
       '@(?)('.$email.')(?)@ie');                   // any remaining emails need to be obfuscated
     $replacements = array(
-      "'$1<a href=\"/contact/'.LinkFormater::encrypt_email('$2').'/\" rel=\"nofollow\">'.LinkFormater::obfuscate_email('$2').'</a>$3'",
+      '"$1<a href=\"".LinkFormater::email_link("$2").\'" rel="nofollow">\'.LinkFormater::obfuscate_email("$2")."</a>$3"',
       '$1<a href="$2"'       .$rel.'>$2</a>$3',
       '$1<a href="http://$2"'.$rel.'>$2</a>$3',
-      "'$1\"'.full_path('$3','{$post->permalink}').'\"$4'",
-      "'$1\"/contact/'.LinkFormater::encrypt_email('$3').'/\" rel=\"nofollow\"$4'",
-      "'$1'.LinkFormater::obfuscate_email('$2').'$3'");
+      '"$1\"".full_path("$3",\''.$post->permalink.'\')."\"$4"',
+      '"$1\"".LinkFormater::email_link("$3")."\" rel=\"nofollow\"$4"',
+      '"$1".LinkFormater::obfuscate_email("$2")."$3"');
     if (!$create_links) { $patterns = array_slice($patterns, 3); $replacements = array_slice($replacements, 3); }
     return preg_replace($patterns, $replacements, $content);
+  }
+  private static function email_link($email) {
+    return '/'.URL::get('contact_redir', array('email_hash' => LinkFormater::encrypt_email($email)), true, false, false);
   }
   private static function obfuscate_email($email) {
     $inj = array('NULL', 'REMOVE', 'XXX', 'JUNK', 'SPAM');
@@ -89,9 +92,9 @@ class LinkFormater extends Format {
     $count = count($parts);
     $email = '';
     for ($i = 0; $i < $count; $i++) {
-        $email .= '<span>'.array_rand($inj).'</span>'.$parts[$i];
+        $email .= '<span>'.$inj[array_rand($inj)].'</span>'.$parts[$i];
     }
-    return $email.'<span>'.array_rand($inj).'</span>';
+    return $email.'<span>'.$inj[array_rand($inj)].'</span>';
   }
   private static $crypt_email_key = 'fairly plain for email', $crypt_md5, $crypt_md5_2;
   public static function init() { LinkFormater::$crypt_md5 = md5(LinkFormater::$crypt_email_key); LinkFormater::$crypt_md5_2 = md5(LinkFormater::$crypt_md5); }
