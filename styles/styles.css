@@ -411,11 +411,12 @@ ul.error, ul.success {
 #commentlist li.comment.bypostauthor { border-color: black; background-color: #339900; }
 #commentlist li.comment.bypostauthor a { color: black; }
 #commentlist li.comment.bypostauthor hr { color: black; background-color: black; }
-#commentlist li.comment-unapproved { border-color: #880000 !important; }
-#commentlist li.comment-scanning { border-color: #880000 !important; }
+#commentlist li.comment-unapproved { border-color: #880000 !important; background: #800; }
+#commentlist li.comment-scanning { border-color: #880000 !important; background: #800; }
 #commentlist li.comment .counter { float: left; text-align: center; width: 24px; padding-left: 5px; }
 /*#commentlist li.comment img.gravatar { float: right; margin: -5px 0 0; }*/
 #commentlist li.comment .commentauthor { /*font-size: 1.15em;*/ font-weight: bold; }
+#commentlist li.comment .comment-status { font-weight: bold; text-align: center; }
 #commentlist li.comment .comment-content { padding: 0 5px; max-height: 260px; overflow: auto; clear: both; }
 .comment-content p, .comment-content ul, .comment-content ol, .comment-content div, .comment-content blockquote { margin: 8px 0; }
 #commentlist li.comment img { padding: 0; border: none; }

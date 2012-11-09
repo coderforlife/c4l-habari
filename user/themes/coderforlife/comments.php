@@ -22,7 +22,8 @@ google_ad_client = "ca-pub-5735177462697983"; google_ad_slot = "8360279414"; goo
 <li id="comment-<?php echo $comment->id; ?>" <?php echo $theme->my_comment_class( $comment, $post ); ?>>
 <a href="#comment-<?php echo $comment->id; ?>" class="counter" title="<?php _e('Permanent Link to this Comment'); ?>"><img src="/images/blog/comment.png" alt="#<?php echo $comment->id; ?>"></a>
 <span class="commentauthor"><?php echo $comment_url; ?></span>
-<small class="comment-meta"><?php $comment->date->out(); ?><?php if ( $comment->status != Comment::STATUS_APPROVED ) { ?> <br><em><?php _e('In moderation'); ?></em><?php } ?></small>
+<small class="comment-meta"><?php $comment->date->out(); ?></small> 
+<div class="comment-status"><?php if ( $comment->status != Comment::STATUS_APPROVED ) { ?>In moderation<?php } ?></div>
 <div class="comment-content"><?php echo $comment->content_out; ?></div>
 </li>
 <?php } ?>
