@@ -1,6 +1,3 @@
-[submodule "system"]
-	path = system
-	url = https://github.com/coderforlife/c4l-habari-system.git
 [submodule "user/plugins/coderforlife/geshi"]
 	path = user/plugins/coderforlife/geshi
 	url = https://github.com/coderforlife/geshi.git
