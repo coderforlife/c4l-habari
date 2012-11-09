@@ -329,9 +329,11 @@ class CoderForLife extends Plugin {
     // add templates for projects
     $this->add_template('project.single', dirname(__FILE__).'/project.single.php');
     $this->add_template('project.multiple', dirname(__FILE__).'/project.multiple.php');
+  }
 
-    // Add the language attribute to the <code> element
-    InputFilter::$whitelist_attributes['code'] = array('language'=>'text');
+  private static function filter_inputfilter_whitelist_attributes(array $whitelist_attributes) {
+    $whitelist_attributes['code'] = array('language'=>'text');
+    return $whitelist_attributes;
   }
 
   private static function create_rule($name, $priority, $regex, $build_str)
@@ -423,6 +425,10 @@ class CoderForLife extends Plugin {
   {
 		$alternate_rules['atom_feed_projects'] = 'display_project';
 		$alternate_rules['atom_feed_project_comments'] = 'display_home';
+  }
+  public function filter_pingback_add_header($add_header, $action)
+  {
+    return $add_header || $action == 'display_project';
   }
 
   // handle W7BU bootskin URLs
@@ -572,12 +578,12 @@ class CoderForLife extends Plugin {
   public function filter_post_content_excerpt($ce, $post) {
     $ce = StripHTML::strip_excerpt_tags($ce);
     $ce = LinkFormater::linkify($post->style == 'raw' ? $ce : Format::autop($ce), $post);
-    return Format::more($ce, $post, _t('Read More &raquo;'), 100, 2); // Limit post length on listings to 2 paragraphs or 100 words
+    return Format::more($ce, $post, _t('Read More &raquo;'), 100, 2, false); // Limit post length on listings to 2 paragraphs or 100 words
   }
 
   // Process post excerpts
   public function filter_post_tiny_content_excerpt($x, $post) {
-    return StripHTML::strip_all_html(Format::more(StripHTML::strip_all_html($post->content), $post, '', 50, 1)); // Limit to 1 paragraphs or 50 words
+    return StripHTML::strip_all_html(Format::summarize(StripHTML::strip_all_html($post->content), 50, 1)); // Limit to 1 paragraphs or 50 words
   }
 
   public function filter_post_permalink($content, $post) {
