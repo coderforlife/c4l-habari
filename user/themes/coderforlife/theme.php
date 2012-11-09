@@ -62,6 +62,9 @@ class CoderForLifeTheme extends Theme {
 		if ( $comment->status == Comment::STATUS_UNAPPROVED ) {
 			$class.= ' comment-unapproved';
 		}
+		if ( $comment->status == Defensio::COMMENT_STATUS_QUEUED ) {
+			$class.= ' comment-scanning';
+		}
 		// check to see if the comment is by a registered user
 		if ( $u = User::get( $comment->email ) ) {
 			$class.= ' byuser comment-author-' . Utils::slugify( $u->displayname );
