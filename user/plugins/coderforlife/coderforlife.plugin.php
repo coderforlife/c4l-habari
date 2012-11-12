@@ -313,7 +313,7 @@ VID
     return $content;
   }
 }
-
+  
 class CoderForLife extends Plugin {
   public function action_plugin_activation($plugin_file) {
     // add the 'project 'content type and allow it to be read
@@ -340,21 +340,33 @@ class CoderForLife extends Plugin {
   {
     return new RewriteRule(array('name'=>$name, 'handler'=>'PluginHandler', 'action'=>$name, 'priority'=>$priority, 'parse_regex'=>$regex, 'build_str'=>$build_str));
   }
+  
+  private static function create_proj_rule($name, $handler, $action, $priority, $regex, $build_str)
+  {
+    return new RewriteRule(array('name'=>$name, 'handler'=>$handler, 'action'=>$action, 'priority'=>$priority, 'parse_regex'=>$regex, 'build_str'=>$build_str, 'parameters' => serialize(array('require_match' => array('CoderForLife', 'rewrite_project_slug')))));
+  }
+  
+  public static function rewrite_project_slug(RewriteRule $rule, $stub, array $parameters)
+  {
+    $rule->named_arg_values['slug'] = $slug = 'projects-' . str_replace('/', '-', $rule->named_arg_values['name']);
+    return Posts::get(array( 'slug' => array($slug), 'content_type' => Post::type('project'), 'count' => true )) > 0;
+  }
 
   public function filter_rewrite_rules($rules)
   {
-    $rules[] = CoderForLife::create_rule('display_project',            8, '%^projects/(?P<name>.+)/?$%iU',                                       'projects/{$name}/');
-    $rules[] = CoderForLife::create_rule('atom_feed_projects',         6, '%^projects/atom(?:/page/(?P<page>\d+))?/?$%i',                        'projects/atom(/page/{$page})');
-    $rules[] = CoderForLife::create_rule('atom_feed_project_comments', 7, '%^projects/(?P<name>.+)/atom/comments(?:/page/(?P<page>\d+))?/?$%iU', 'projects/{$name}/atom/comments(/page/{$page})');
+    $rules[] = CoderForLife::create_proj_rule('display_project',            'UserThemeHandler', 'display_post',   8, '%^projects/(?P<name>.+)/?$%iU',                                       'projects/{$name}/');
+    $rules[] = CoderForLife::create_proj_rule('atom_feed_project_comments', 'AtomHandler',      'entry_comments', 7, '%^projects/(?P<name>.+)/atom/comments(?:/page/(?P<page>\d+))?/?$%iU', 'projects/{$name}/atom/comments(/page/{$page})');
 
-    $rules[] = CoderForLife::create_rule('display_w7bu_user',          6, '%^projects/win7boot/skins/user/(?P<user_slug>.+)/?$%iU',              'projects/win7boot/skins/user/{$user_slug}/');
-    $rules[] = CoderForLife::create_rule('display_w7bu_skin',          6, '%^projects/win7boot/skins/skin/(?P<skin_slug>.+)/?$%iU',              'projects/win7boot/skins/skin/{$skin_slug}/');
+    $rules[] = CoderForLife::create_rule('atom_feed_projects', 6, '%^projects/atom(?:/page/(?P<page>\d+))?/?$%i',           'projects/atom(/page/{$page})');
+    $rules[] = CoderForLife::create_rule('contact_redir',      6, '%^contact/(?P<email_hash>[A-Za-z0-9_-]+)/?$%i',          'contact/{$email_hash}/');
 
-    $rules[] = CoderForLife::create_rule('contact_redir',              6, '%^contact/(?P<email_hash>[A-Za-z0-9_-]+)/?$%i',                       'contact/{$email_hash}/');
+    $rules[] = CoderForLife::create_rule('display_w7bu_user',  6, '%^projects/win7boot/skins/user/(?P<user_slug>.+)/?$%iU', 'projects/win7boot/skins/user/{$user_slug}/');
+    $rules[] = CoderForLife::create_rule('display_w7bu_skin',  6, '%^projects/win7boot/skins/skin/(?P<skin_slug>.+)/?$%iU', 'projects/win7boot/skins/skin/{$skin_slug}/');
+
     
     return $rules;
   }
-  
+
   // Special contact (email) redirection
   public function action_plugin_act_contact_redir($handler) {
     // TODO: display the email on the resulting page in some fashion
@@ -399,21 +411,12 @@ class CoderForLife extends Plugin {
   }
 
   // handle project URLs
-  public function action_plugin_act_display_project($handler) {
-    $name = str_replace('/', '-', $handler->handler_vars['name']);
-    $handler->theme->act_display_post(CoderForLife::get_proj_arr("projects-$name"));
-  }
-  public function action_plugin_act_atom_feed_project_comments($handler) {
-    $ah = new AtomHandler();
-    $name = str_replace('/', '-', $handler->handler_vars['name']);
-    $ah->get_comments(array('slug'=>"projects-$name"));
-  }
   public function action_plugin_act_atom_feed_projects($handler) {
     $ah = new AtomHandler();
-    $ah->get_collection(array('content_type'=>Post::type('project'),'status'=>Post::status('published')));
+    $ah->get_collection(array('content_type'=>Post::type('project')));
   }
   public function filter_rewrite_args($args, $name) {
-    if ($name == 'atom_feed_project_comments') {
+    if ($name == 'display_project' || $name == 'atom_feed_project_comments') {
       if (array_key_exists('slug', $args))
         $args['name'] = str_replace('-', '/', substr($args['slug'], 9));
       else if (!array_key_exists('name', $args))
@@ -423,12 +426,10 @@ class CoderForLife extends Plugin {
   }
   public function filter_atom_get_collection_alternate_rules($alt_rules)
   {
-		$alternate_rules['atom_feed_projects'] = 'display_project';
-		$alternate_rules['atom_feed_project_comments'] = 'display_home';
-  }
-  public function filter_pingback_add_header($add_header, $action)
-  {
-    return $add_header || $action == 'display_project';
+    // todo: don't actually know what this is doing
+    $alt_rules['atom_feed_projects'] = 'display_home';
+    $alt_rules['atom_feed_project_comments'] = 'display_entry';
+    return $alt_rules;
   }
 
   // handle W7BU bootskin URLs

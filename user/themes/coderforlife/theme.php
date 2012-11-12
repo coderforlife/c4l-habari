@@ -62,7 +62,7 @@ class CoderForLifeTheme extends Theme {
 		if ( $comment->status == Comment::STATUS_UNAPPROVED ) {
 			$class.= ' comment-unapproved';
 		}
-		if ( $comment->status == Defensio::COMMENT_STATUS_QUEUED ) {
+		if ( class_exists('Defensio') && $comment->status == Defensio::COMMENT_STATUS_QUEUED ) {
 			$class.= ' comment-scanning';
 		}
 		// check to see if the comment is by a registered user
