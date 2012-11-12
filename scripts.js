@@ -1,5 +1,5 @@
 if(typeof String.prototype.trim!=='function'){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,'');}}
-function $(e){var d=document;if(typeof e=='string'){if(d.getElementById){e=d.getElementById(e);}else if(d.all){e=d.all[name];}else if(d.layers){e=d.layers[name];}}return e;}
+function _$(e){var d=document;if(typeof e=='string'){if(d.getElementById){e=d.getElementById(e);}else if(d.all){e=d.all[name];}else if(d.layers){e=d.layers[name];}}return e;}
 var isReady=false,whenReady=[];
 function doReady(){if(isReady||!document.addEventListener&&document.readyState!=="complete"){return;}if(!document.body){return setTimeout(doReady,1);}isReady=true;for(var i=0;i<whenReady.length;i++){whenReady[i]();}}
 function addOnReady(f){
@@ -22,14 +22,14 @@ function hasClass(x,c){return x.className.match(new RegExp('\\b'+c+'\\b','i'));}
 function addClass(x,c){x.className+=' '+c;}
 function removeClass(x,c){x.className=x.className.replace(new RegExp('\\b'+c+'\\b','gi'),'').trim();}
 function toggleClass(x,c){var b=hasClass(x,c);b?removeClass(x,c):addClass(x,c);return !b;}
-function toggleHidden(n){n=$(n);if(n){toggleClass(n,'hidden');}}
-function toggleDisplay(n){n=$(n);if(n){var d=n.style.display;n.style.display=(d&&d=='none')?'':'none';}}
+function toggleHidden(n){n=_$(n);if(n){toggleClass(n,'hidden');}}
+function toggleDisplay(n){n=_$(n);if(n){var d=n.style.display;n.style.display=(d&&d=='none')?'':'none';}}
 function clamp(x,a,b){return(x<a?a:(x>b?b:x));}
 function event_target(e){e=e?e:window.event;var t=e.target?e.target:e.srcElement;return(t.nodeType==3)?t.parentNode:t;}
 function pageHeight(){var d=document;return window.innerHeight!=null?window.innerHeight:d.documentElement&&d.documentElement.clientHeight?d.documentElement.clientHeight:d.body!=null?d.body.clientHeight:null;}
 function set_tag_visibility(n,h){var t=document.getElementsByTagName(n),i=t.length-1;for(;i>=0;i--)t[i].style.visibility=h;}
 function toggle_objects(h){set_tag_visibility('SELECT',h);set_tag_visibility('IFRAME',h);set_tag_visibility('OBJECT',h);}
-function for_all_with_tag_and_class(t,c,f) {var es=$('content').getElementsByTagName(t),i,e,x=false;for(i=0,e;(e=es[i]);i++){if(hasClass(e,c)){f(e);x=true;}}return x;}
+function for_all_with_tag_and_class(t,c,f) {var c=_$('content');if(!c){return false;}var es=c.getElementsByTagName(t),i,e,x=false;for(i=0,e;(e=es[i]);i++){if(hasClass(e,c)){f(e);x=true;}}return x;}
 
 ///// Preloading /////
 var img=new Image();img.src='/images/black1.png';
@@ -40,7 +40,7 @@ var expandable,expander,expand_startWidth=0,expand_startPos=0,mouseIsUp=true,exp
 function expand_start(e){expand_startPos=getMouseX(e);expand_startWidth=parseInt(expandable.style.width.replace(/px/gi,''));mouseIsUp=false;e.preventDefault();}
 //reset the position of the resize-bar when the mouse moves while button down
 function create_expander(elem, expandHeightAlso){
-  expandable = $(elem);
+  expandable = _$(elem);
   expandable.className += ' expandable';
   expandable.expandHeightAlso = expandHeightAlso;
   expander = document.createElement('div');
@@ -64,9 +64,9 @@ addOnReady(function(){for_all_with_tag_and_class('OBJECT','expandable',function(
 
 ///// Zoom Images /////
 var close_keys = [8, 13, 27, 32, 88, 120];
-function zoom_hide(){var o=$('overlay');o.style.display='none';o.firstChild.nextSibling.src=null;toggle_objects('visible');document.onkeypress=document.onclick=null;}
+function zoom_hide(){var o=_$('overlay');o.style.display='none';o.firstChild.nextSibling.src=null;toggle_objects('visible');document.onkeypress=document.onclick=null;}
 function zoom_key_press(e){e=e?e:window.event;var k=e.keyCode?e.keyCode:e.which;if(contains(close_keys,k)){zoom_hide();return false;}}
-function zoom(i){var o=$('overlay'),s=i.getAttribute('full');o.firstChild.nextSibling.src=s?s:i.src;o.style.display='';document.onkeypress=zoom_key_press;setTimeout(function(){document.onclick=zoom_hide}, 0);}
+function zoom(i){var o=_$('overlay'),s=i.getAttribute('full');o.firstChild.nextSibling.src=s?s:i.src;o.style.display='';document.onkeypress=zoom_key_press;setTimeout(function(){document.onclick=zoom_hide}, 0);}
 addOnReady(function(){
   if (for_all_with_tag_and_class('IMG','zoom',function(i){
     var w=document.createElement('span');
@@ -90,7 +90,7 @@ addOnReady(function(){
 ///// Projects Page Toggling /////
 var best_on=true;
 function toggleType(x) {
-  var t = x.id.substr(4), on = !toggleClass(x, 'inactive'), bb = $('browseboxes'), a = bb.firstChild;
+  var t = x.id.substr(4), on = !toggleClass(x, 'inactive'), bb = _$('browseboxes'), a = bb.firstChild;
   var re = new RegExp('\\b'+t+'\\b','i');
   while (a && a.tagName=='A') {
     if (on&&a.inactive&&contains(a.inactive,t)) {
@@ -107,7 +107,7 @@ function toggleType(x) {
   }
 }
 function toggleBest(x) {
-  var bb = $('browseboxes'), a = bb.firstChild;
+  var bb = _$('browseboxes'), a = bb.firstChild;
   best_on = toggleClass(x, 'inactive');
   while (a && a.tagName=='A') {
     if (best_on&&a.rev!='best') { a.style.display = 'none'; }
@@ -115,16 +115,16 @@ function toggleBest(x) {
     a = a.nextSibling;
   }
 }
-addOnReady(function(){var p=$('projsel');if(p)p.style.display='';});
+addOnReady(function(){var p=_$('projsel');if(p)p.style.display='';});
 
 
 ///// Table of Contents /////
 function addNamedLink(link,e){var a=document.createElement('A');e.insertBefore(a,e.firstChild).name=link;if(link==window.location.hash.substring(1)){window.location.hash='#';window.location.hash='#'+link;}return 1;}
 function createRefLink(href){var a=document.createElement('A');a.className='ref';a.href='#'+href;return a;}
-function openToc(){$('toc').className='open';}
-function closeToc(){$('toc').className='';}
+function openToc(){_$('toc').className='open';}
+function closeToc(){_$('toc').className='';}
 addOnReady(function makeToc() {
-  var list = $('toc'), all = $('content').getElementsByTagName('*');
+  var list = _$('toc'), all = _$('content').getElementsByTagName('*');
   var reH = /^H[1-3]$/, reX = /[^A-Za-z_0-9]/g;
   var prevLvl = 0, l;
   for (var i = 0, e; (e = all[i]); i++) {
