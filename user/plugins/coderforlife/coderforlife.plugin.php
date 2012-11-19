@@ -177,7 +177,8 @@ class SpecialTagsFormater extends Format {
       $full = ' full="'.htmlspecialchars($src, ENT_QUOTES).'"';
       $src = $thumb;
     }
-    $s = '<img src="'.htmlspecialchars($src, ENT_QUOTES).'" alt="'.htmlspecialchars($alt, ENT_QUOTES)."\" class='zoom $class' title='Click to enlarge'$width$height$full $extra>";
+    if ($class != '') { $class = ' '.$class; }
+    $s = '<img src="'.htmlspecialchars($src, ENT_QUOTES).'" alt="'.htmlspecialchars($alt, ENT_QUOTES)."\" class='zoom$class'$width$height$full $extra>";
     return $s;
   }
   /*public static function thumb($src, $title, $alt, $height = 0, $extra = array()) {
@@ -283,6 +284,7 @@ VID
     // Zoom
     // required: src, alt
     // optional: width, height (should use at least one), class, thumb
+    // "title" is copied over if given, and it is used as a caption
     $content = SpecialTagsFormater::do_tag('zoom', $content, 'SpecialTagsFormater::zoom', array('src', 'alt'), array('width', 'height', 'class', 'thumb'));
 
     // Thumbnails

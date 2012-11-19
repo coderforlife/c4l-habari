@@ -71,7 +71,10 @@ span.zoom:hover:after { content: url(/images/expand.png); vertical-align: bottom
 @media screen and (-webkit-min-device-pixel-ratio:0) { span.zoom:hover:after { position: static; } } /* remove relative positioning for Safari/Chrome */
 
 #overlay { position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1000; background-image: url(/images/black2.png); text-align: center; }
-#overlay img { border: 10px solid gray; margin: -10px 0; max-width: 100%; max-height: 100%; vertical-align: middle; }
+#overlay span { background: gray; padding: 10px; margin: -10px 0; max-width: 100%; max-height: 100%; vertical-align: middle; display: inline-block; line-height: normal; }
+#overlay span img { max-width: 100%; max-height: 100%; }
+#overlay span div { padding-top: 10px; }
+#overlay span div:empty { display: none; } 
 
 .donate { display: inline; }
 .donate input { vertical-align: bottom; border: 0 none; }
