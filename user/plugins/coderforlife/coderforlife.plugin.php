@@ -205,7 +205,8 @@ class SpecialTagsFormater extends Format {
   }
   public static function download($file, $name, $class = '', $extra = array()) {
     $extra = SpecialTagsFormater::make_attrs($extra);
-    $s = "<a class='download $class' href='$file' onclick='trkr._trackPageview(this.pathname)'$extra>$name (";
+    if ($class) { $class = ' '.$class; }
+    $s = "<a class='download$class' href='".full_path($file)."' onclick='trkr._trackPageview(this.pathname)'$extra>$name (";
     $file = physical_path($file);
     if (file_exists($file))
       $s = $s.SpecialTagsFormater::size($file).', updated '.date('Y-m-d', filemtime($file));
